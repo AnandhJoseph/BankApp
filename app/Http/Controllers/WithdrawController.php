@@ -17,11 +17,10 @@ class WithdrawController extends Controller
         ]);
 
         $user = Auth::user();
-        $data = User::all();
 
         if ($request->input('amount') > $user->balance) {
 
-            return redirect('withdraw')->with('success', 'Transaction can not be carrird out.
+            return redirect('withdraw')->with('message', 'Transaction can not be carrird out.
             Insufficient balance.');
         } else {
             $transaction = new Transaction([
@@ -33,10 +32,10 @@ class WithdrawController extends Controller
                 'time' => now(),
             ]);
             $user->balance = ($user->balance - $request->input('amount'));
-            $data->save();
+            $user->save();
         }
 
         $transaction->save();
-        return redirect('home')->with('success', 'Transaction created successfully.');
+        return redirect('home')->with('success', 'Amount has Debited from your account successfully.');
     }
 }

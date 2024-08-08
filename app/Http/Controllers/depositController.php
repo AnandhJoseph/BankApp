@@ -9,14 +9,16 @@ use Illuminate\Support\Facades\Auth;
 
 class depositController extends Controller
 {
-    public function depositPage(Request $request, User $user)
+    public function depositPage(Request $request)
     {
         $user = Auth::user();
+
         $request->validate([
 
             'amount' => 'required|numeric|min:0.01',
         ]);
 
+        $amount = $request->amount;
         $transaction = new Transaction([
             'transaction_type' => ('Credit'),
             'details' => ('Deposit'),
@@ -25,12 +27,11 @@ class depositController extends Controller
             'balance' => ($user->balance + $request->input('amount')),
             'time' => now(),
         ]);
-        // 'balance' => ($user->balance + $request->input('amount')),
-        // ]);
-        $user->update([
-            'balance' => ($user->balance + $request->input('amount')),
-        ]);
+        $user->balance = $user->balance + $amount;
+        $user->save();
+        
         $transaction->save();
-        return redirect('home')->with('success', 'Transaction created successfully.');
+
+        return redirect('home')->with('success', 'Amount Has debited to your Account successfully.');
     }
 }

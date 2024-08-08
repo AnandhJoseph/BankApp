@@ -42,7 +42,8 @@ class UserController extends Controller
 
     public function statement()
     {
-        $users = User::latest()->paginate(10);
-        return view('statement', compact('users'));
+        $user = Auth::id();
+        $transactions = Transaction::where('user_id', $user)->paginate(10);
+        return view('statement', compact('transactions'));
     }
 }
